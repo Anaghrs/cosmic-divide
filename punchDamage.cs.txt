@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class punchDamage : MonoBehaviour
+{
+    BoxCollider bxcollidor;
+
+    void Start()
+    {
+        bxcollidor = GetComponent<BoxCollider>();
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+        {
+            Debug.Log("other object name"+other.gameObject.name);
+            Destroy(other.gameObject);
+        }
+    }
+}
+
+    

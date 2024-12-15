@@ -1,0 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+
+public class questView : MonoBehaviour
+{
+    public Canvas popupCanvas;
+    public shootingScript shoot;
+    public TextMeshProUGUI dialogText;
+    public TextMeshProUGUI dialogText1;
+
+    void Start()
+    {
+        // Make sure the canvas is initially hidden
+        if (popupCanvas != null)
+        {
+            popupCanvas.gameObject.SetActive(false);
+        }
+        dialogText1.gameObject.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (shoot.c1 == null)
+        {
+            dialogText.gameObject.SetActive(false);
+            dialogText1.gameObject.SetActive(true);
+        }
+        // Check if the Tab key is being held down
+        if (Input.GetKey(KeyCode.Tab))
+        {
+            ShowCanvas();
+        }
+        else
+        {
+            HideCanvas();
+        }
+    }
+
+    void ShowCanvas()
+    {
+        if (popupCanvas != null && !popupCanvas.gameObject.activeSelf)
+        {
+            popupCanvas.gameObject.SetActive(true); // Show the canvas
+        }
+    }
+
+    void HideCanvas()
+    {
+        if (popupCanvas != null && popupCanvas.gameObject.activeSelf)
+        {
+            popupCanvas.gameObject.SetActive(false); // Hide the canvas
+        }
+    }
+}

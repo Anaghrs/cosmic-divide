@@ -1,0 +1,119 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Cinemachine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
+
+public class shootingScript : MonoBehaviour
+{
+    public CinemachineVirtualCamera aimCamera;
+    public cameraController allCamera;
+    public bool isAim = false;
+    public Image crosshair;
+    public GameObject fireball;
+    public GameObject fireball2;
+    public GameObject c1;
+    public Transform fireballSpwanPos;
+    private GameObject currentWeapon;
+
+    void Start()
+    {
+        crosshair.gameObject.SetActive(false);
+        currentWeapon= fireball;
+        fireball.SetActive(true);
+        fireball2.SetActive(false);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            SwitchWeapon();
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse1)) 
+        {
+            if(isAim)
+            {
+                shootingModeOver();
+            }
+            else
+            {
+                shootingMode();
+
+            }
+            
+        }
+        if (Input.GetKeyUp(KeyCode.Mouse0 )&& isAim)
+        {
+            if (fireball.activeSelf)
+            {
+                shoot();
+            }
+            else if (fireball2.activeSelf)
+            {
+                shoot1();
+            }
+            
+        }
+    }
+    void SwitchWeapon()
+    {
+        // Toggle between the two weapons
+        if (currentWeapon == fireball && c1==null)
+        {
+            // Deactivate weapon1, activate weapon2
+            fireball.SetActive(false);
+            fireball2.SetActive(true);
+            currentWeapon = fireball2;  // Update the current weapon
+        }
+        else
+        {
+            // Deactivate weapon2, activate weapon1
+            fireball2.SetActive(false);
+            fireball.SetActive(true);
+            currentWeapon = fireball;  // Update the current weapon
+        }
+    }
+    void shootingMode()
+    {
+        isAim = true;
+        allCamera.dissableAllCameras();
+        aimCamera.gameObject.SetActive(true);
+        crosshair.gameObject.SetActive(true);
+        
+    }
+    void shootingModeOver()
+    {
+        isAim = false;
+        allCamera.enableLastCamera();
+        aimCamera.gameObject.SetActive(false);
+        crosshair.gameObject.SetActive(false);
+    }
+    void shoot()
+    {
+        Vector2 aimPosition = new Vector2(Screen.width/2, Screen.height/2);
+        Ray ray=Camera.main.ScreenPointToRay(aimPosition);
+        if (Physics.Raycast(ray,out RaycastHit rayCastHit,999f))
+        {
+            Vector3 aimDirection = (rayCastHit.point - fireballSpwanPos.position).normalized;
+            Instantiate(fireball,fireballSpwanPos.position,Quaternion.LookRotation(aimDirection,Vector3.up));
+        }
+    }
+    void shoot1()
+    {
+        Vector2 aimPosition = new Vector2(Screen.width / 2, Screen.height / 2);
+        Ray ray = Camera.main.ScreenPointToRay(aimPosition);
+        if (Physics.Raycast(ray, out RaycastHit rayCastHit, 999f))
+        {
+            Vector3 aimDirection = (rayCastHit.point - fireballSpwanPos.position).normalized;
+            Instantiate(fireball2, fireballSpwanPos.position, Quaternion.LookRotation(aimDirection, Vector3.up));
+        }
+    }
+    
+
+
+
+
+}

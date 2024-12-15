@@ -1,0 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Cinemachine;
+
+public class cameraController : MonoBehaviour
+{
+    // Start is called before the first frame update
+    public List<CinemachineVirtualCamera> allCamera=new List<CinemachineVirtualCamera>();
+    public int camNumber = 0;
+    void Start()
+    {
+        camChanger();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            camNumber++;
+            camChanger(); 
+        }
+    }
+    void camChanger()
+    {
+        for (int i=0;i<allCamera.Count;i++)
+        {
+            if (allCamera.Count -1 < camNumber)
+            {
+                camNumber = 0;
+            }
+            if (camNumber==i)
+            {
+                allCamera[i].gameObject.SetActive(true);
+
+            }
+            else
+            {
+                allCamera[i].gameObject.SetActive(false);
+            }
+            
+        }
+    }
+    public void dissableAllCameras()
+    {
+        for(int i=0; i<allCamera.Count;i++)
+        {
+            allCamera[i].gameObject.SetActive(false);
+        }
+    }
+    public void enableLastCamera()
+    {
+        camChanger();
+    }
+}

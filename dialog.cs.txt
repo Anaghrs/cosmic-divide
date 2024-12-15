@@ -1,0 +1,58 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class dialog : MonoBehaviour
+{
+   
+
+    public TextMeshProUGUI dialogText;
+    public TextMeshProUGUI dialogText1;
+    public Button btn1;
+    public Button btn2;
+    public Canvas dialogUI;
+    public bool dialogUIActive;
+    public shootingScript shoot;
+    public Charac npc;
+    private void Start()
+    {
+        dialogUI.gameObject.SetActive(false);
+        dialogText1.gameObject.SetActive(false);
+    }
+    private void Update()
+    {
+        if(shoot.c1==null)
+        {
+            dialogText.gameObject.SetActive(false);
+            dialogText1.gameObject.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.T) && npc.playerAnRange == true)
+        {
+            startConversation();
+
+        }
+    }
+
+    public void openDialogUI()
+    {
+        dialogUI.gameObject.SetActive(true);
+        dialogUIActive = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    public void closeDialogUI()
+    {
+        dialogUI.gameObject.SetActive(false);
+        dialogUIActive = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    public void startConversation()
+    {
+
+        openDialogUI();
+
+    }
+}

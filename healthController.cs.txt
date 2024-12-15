@@ -1,0 +1,156 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public class healthController : MonoBehaviour
+{
+    public float totalHealth = 100;
+    public float playerHealth;
+    public Slider healthSlider;
+    public bool isTakingDamage=false;
+    public bool isHealing=false;
+    public float healingTime = 5f;
+    public float remainingHealingTime;
+    public Animator playerAnimator;
+    public GameObject RightHandController;
+    public shootingScript shooting;
+    void Start()
+    {
+        playerHealth=totalHealth;
+        remainingHealingTime=healingTime;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.I)) {
+            playerDamage(25f);
+        }
+        if(isTakingDamage)
+        {
+            takingDamage();
+        }
+        if(isHealing)
+        {
+            startHealing();
+        }
+        if (Input.GetKeyDown(KeyCode.Mouse0)) 
+        {
+            if (!shooting.isAim)
+            {
+                StartCoroutine(playerPunch());
+            }
+            else if(shooting.isAim)
+            {
+                StartCoroutine(playerMagic());
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Main_Menu");
+        }
+
+
+    }
+    public void playerDamage(float damage)
+    {
+        playerAnimator.SetLayerWeight(1, 1);
+        if (playerHealth<=0)
+        {
+            gameOver();
+        }
+        else if (playerHealth>totalHealth)
+        {
+            playerHealth=totalHealth;
+        }
+        else
+        {
+            playerHealth -= damage;
+            remainingHealingTime = healingTime;
+            isTakingDamage = true;
+            
+            isHealing = false;
+            if(playerHealth <= 0)
+            {
+                gameOver();
+                isHealing=false ;
+            }
+            else
+            {
+                StartCoroutine(combatAnimation());
+            }
+            
+            
+        }
+        healthSlider.value = playerHealth;
+
+    }
+    public void takingDamage()
+    {
+        remainingHealingTime -= Time.deltaTime;
+        
+        if (remainingHealingTime <=0 )
+        {
+            isTakingDamage = false;
+           
+            isHealing = true;
+            
+        }
+    }
+    public void startHealing()
+    {
+        
+        playerHealth += Time.deltaTime * 2;
+        healthSlider.value = playerHealth;
+        
+        if (playerHealth > totalHealth)
+        {
+            playerHealth = totalHealth;
+            isHealing=false;
+        }
+    }
+    public void gameOver()
+    {
+        playerHealth = 0;
+        playerAnimator.SetBool("isDead", true);
+        playerAnimator.SetLayerWeight(1, 0);
+        this.gameObject.GetComponent<PlayerInput>().enabled = false;
+    }
+    IEnumerator combatAnimation()
+    {
+        playerAnimator.SetBool("combatOver",false);
+        playerAnimator.SetBool("takeDamage", true);
+        yield return new WaitForSeconds(1f);
+        playerAnimator.SetBool("takeDamage", false);
+        playerAnimator.SetBool("combatOver", true);
+        playerAnimator.SetLayerWeight(1, 0);
+    }
+    IEnumerator playerPunch()
+    {
+        playerAnimator.SetLayerWeight(1, 1);
+        playerAnimator.SetBool("combatOver",false );
+        playerAnimator.SetBool("punch",true);
+        yield return new WaitForSeconds(0.5f);
+        RightHandController.GetComponent<BoxCollider>().enabled = true;
+        yield return new WaitForSeconds(2f);
+        playerAnimator.SetLayerWeight(1, 0);
+        RightHandController.GetComponent<BoxCollider>().enabled = false;
+        playerAnimator.SetBool("combatOver",true );
+        playerAnimator.SetBool("punch", false);
+
+    }
+    IEnumerator playerMagic()
+    {
+        playerAnimator.SetLayerWeight(1, 1);
+        playerAnimator.SetBool("combatOver", false);
+        playerAnimator.SetBool("magic", true);
+        yield return new WaitForSeconds(3f);
+        playerAnimator.SetLayerWeight(1, 0);
+        playerAnimator.SetBool("combatOver", true);
+        playerAnimator.SetBool("magic",false) ;
+
+    }
+}
